@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="darkreader-lock">
+    <title>Rails New Command Builder</title>
+    <link rel="stylesheet" href="assets/vendor/inter.css" />
+    <link rel="stylesheet" href="assets/vendor/fontawesome.css" />
+    <link rel="stylesheet" href="assets/vendor/tailwind.css" />
+    <link rel="stylesheet" href="assets/stylesheets/styles.css" />
+    <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22&gt;&lt;text y=%22.9em%22 font-size=%2290%22&gt;💎&lt;/text&gt;&lt;/svg&gt;">
+    <style>
+      /* Preloader styles to prevent flash of unstyled content */
+      .preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #0f0f0f;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.3s ease-out;
+      }
+
+      .preloader.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .preloader-content {
+        text-align: center;
+        color: #e5e5e5;
+      }
+
+      .preloader-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #333;
+        border-top: 4px solid #b91c1c;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 16px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Hide main content initially */
+      body > *:not(.preloader) {
+        opacity: 0;
+      }
+
+      /* Show main content when ready */
+      body.ready > *:not(.preloader) {
+        opacity: 1;
+        transition: opacity 0.3s ease-in;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen text-gray-100">
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+      <div class="preloader-content">
+        <div class="preloader-spinner"></div>
+        <p>Loading Rails Command Builder</p>
+      </div>
+    </div>
+    <!-- Header -->
+    <div class="header-container">
+      <h1 class="text-3xl font-bold text-white">Rails New Command Builder</h1>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 pb-8">
+      <div
+        class="bg-gray-900 rounded-xl shadow-lg p-6 mb-8 border border-gray-800"
+      >
+        <!-- Terminal -->
+        <div class="command-terminal">
+          <div class="terminal-header">
+            <div class="flex items-center">
+              <div class="terminal-dot bg-red-500"></div>
+              <div class="terminal-dot bg-yellow-500"></div>
+              <div class="terminal-dot bg-green-500"></div>
+              <div class="ml-3 text-gray-300 text-sm">rails new</div>
+            </div>
+            <div class="terminal-actions">
+              <button class="reset-button" id="resetButton">
+                <i class="fas fa-undo"></i>
+                Reset
+              </button>
+              <i
+                class="fas fa-copy copy-icon"
+                id="copyIcon"
+                title="Copy to clipboard"
+              ></i>
+            </div>
+          </div>
+          <div class="terminal-content">
+            <div id="commandOutput" class="terminal-line">
+              <span class="terminal-prompt">$</span>
+              <span class="terminal-command">rails new myapp</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs Container -->
+        <div class="tabs-container">
+          <!-- Tabs Header -->
+          <div class="tabs-header">
+            <button class="tab-button active" data-tab="configuration">
+              <i class="fas fa-cog"></i>
+              Configuration Options
+            </button>
+            <button class="tab-button" data-tab="skip">
+              <i class="fas fa-minus-circle"></i>
+              Skip Options
+            </button>
+          </div>
+
+          <!-- Configuration Tab Content -->
+          <div id="configuration-tab" class="tab-content active">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- App Name -->
+              <div class="option-card rounded-lg p-5">
+                <label
+                  for="app_name"
+                  class="block text-sm font-medium text-gray-300 mb-2"
+                >
+                  <i class="fas fa-signature mr-2 ruby-red"></i>
+                  Application Name
+                </label>
+                <input
+                  type="text"
+                  id="app_name"
+                  class="w-full px-4 py-2 border rounded-md dark-input"
+                  placeholder="myapp"
+                  value="myapp"
+                />
+              </div>
+
+              <!-- Database -->
+              <div class="option-card rounded-lg p-5">
+                <label
+                  for="database"
+                  class="block text-sm font-medium text-gray-300 mb-2"
+                >
+                  <i class="fas fa-database mr-2 ruby-red"></i>
+                  Database
+                </label>
+                <select
+                  id="database"
+                  class="w-full px-4 py-2 border rounded-md dark-select"
+                >
+                  <option value="sqlite3">SQLite3 (default)</option>
+                  <option value="postgresql" selected>PostgreSQL</option>
+                  <option value="mysql">MySQL</option>
+                  <option value="trilogy">Trilogy</option>
+                </select>
+              </div>
+
+              <!-- Application Type -->
+              <div class="option-card rounded-lg p-5">
+                <h3 class="text-sm font-medium text-gray-300 mb-3">
+                  <i class="fas fa-cube mr-2 ruby-red"></i>
+                  Application Type
+                </h3>
+
+                <div class="space-y-3">
+                  <label class="flex items-center cursor-pointer">
+                    <div class="checkbox-custom">
+                      <input type="checkbox" id="api" />
+                      <span class="checkmark"></span>
+                    </div>
+                    <span class="ml-3 text-sm text-gray-300"
+                      >API only mode</span
+                    >
+                  </label>
+
+                  <label class="flex items-center cursor-pointer">
+                    <div class="checkbox-custom">
+                      <input type="checkbox" id="minimal" />
+                      <span class="checkmark"></span>
+                    </div>
+                    <span class="ml-3 text-sm text-gray-300">Minimal app</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- JavaScript -->
+              <div class="option-card rounded-lg p-5">
+                <label
+                  for="javascript"
+                  class="block text-sm font-medium text-gray-300 mb-2"
+                >
+                  <i class="fab fa-js-square mr-2 ruby-red"></i>
+                  JavaScript
+                </label>
+                <select
+                  id="javascript"
+                  class="w-full px-4 py-2 border rounded-md dark-select"
+                >
+                  <option value="importmap" selected>
+                    Importmap (default)
+                  </option>
+                  <option value="webpack">Webpack</option>
+                  <option value="esbuild">Esbuild</option>
+                  <option value="rollup">Rollup</option>
+                </select>
+              </div>
+
+              <!-- CSS -->
+              <div class="option-card rounded-lg p-5">
+                <label
+                  for="css"
+                  class="block text-sm font-medium text-gray-300 mb-2"
+                >
+                  <i class="fab fa-css3-alt mr-2 ruby-red"></i>
+                  CSS Framework
+                </label>
+                <select
+                  id="css"
+                  class="w-full px-4 py-2 border rounded-md dark-select"
+                >
+                  <option value="">None</option>
+                  <option value="tailwind" selected>Tailwind CSS</option>
+                  <option value="bootstrap">Bootstrap</option>
+                  <option value="bulma">Bulma</option>
+                  <option value="postcss">PostCSS</option>
+                  <option value="sass">Sass</option>
+                </select>
+              </div>
+
+              <!-- Template -->
+              <div class="option-card rounded-lg p-5">
+                <label
+                  for="template"
+                  class="block text-sm font-medium text-gray-300 mb-2"
+                >
+                  <i class="fas fa-file-code mr-2 ruby-red"></i>
+                  Application Template
+                </label>
+                <input
+                  type="text"
+                  id="template"
+                  class="w-full px-4 py-2 border rounded-md dark-input"
+                  placeholder="https://github.com/example/template.git"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Skip Options Tab Content -->
+          <div id="skip-tab" class="tab-content">
+            <div id="skipOptionsContainer">
+              <!-- Skip options will be dynamically rendered here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- External JavaScript files -->
+    <script src="assets/javascripts/data.js" defer></script>
+    <script src="assets/javascripts/script.js" defer></script>
+  </body>
+</html>
