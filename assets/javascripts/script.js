@@ -30,6 +30,7 @@ class RailsCommandController {
     this.initializeTabs();
     this.renderSkipOptions();
     this.updateCommand();
+    this.initializeTheme();
   }
 
   initializeEventListeners() {
@@ -335,6 +336,45 @@ class RailsCommandController {
       }, 2000);
     } catch (err) {
       console.error("Failed to copy text: ", err);
+    }
+  }
+
+  initializeTheme() {
+    const themeToggleBtn = document.getElementById("themeToggleBtn");
+    const themeIcon = document.getElementById("themeIcon");
+
+    // Check for saved theme preference, otherwise use system preference
+    const savedTheme = localStorage.getItem("theme");
+    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+      .matches
+      ? "dark"
+      : "light";
+    let currentTheme = savedTheme || systemTheme;
+
+    // Apply initial theme
+    this.setTheme(currentTheme);
+
+    // Event listener for theme toggle
+    themeToggleBtn.addEventListener("click", () => {
+      currentTheme = currentTheme === "dark" ? "light" : "dark";
+      this.setTheme(currentTheme);
+    });
+  }
+
+  setTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+    this.updateThemeIcon(theme);
+  }
+
+  updateThemeIcon(theme) {
+    const themeIcon = document.getElementById("themeIcon");
+    if (theme === "dark") {
+      themeIcon.innerHTML =
+        '<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>';
+    } else {
+      themeIcon.innerHTML =
+        '<path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>';
     }
   }
 }
